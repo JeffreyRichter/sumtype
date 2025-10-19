@@ -36,4 +36,4 @@ go get github.com/JeffreyRichter/sumtype
 
 ## License
 
-[Add your license here]
+MIT License - see [LICENSE](LICENSE) file for details

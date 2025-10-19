@@ -173,7 +173,7 @@ type (
 		Kind *ShapeKind
 
 		// radius is the radius of a circle shape
-		_ int
+		_ *int
 
 		// width is the width of a rectangle shape
 		_ *int

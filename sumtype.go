@@ -5,7 +5,6 @@ import (
 	"encoding/json/v2"
 	"fmt"
 	"reflect"
-	"strings"
 	"unsafe"
 )
 
@@ -50,8 +49,8 @@ func (c *Caster[Json]) ZeroNonKindFields(ptrToKindStruct any) {
 }
 
 // ValidateStructFields ensures that Json and all the specific projection types have struct fields
-// in the same order, same type, and same name (case-insensitive or _). If panicOnError is true,
-// ValidateStructFields panics if there is an error, otherwise it returns the error (or nil if no error).
+// in the same order and same type. If panicOnError is true, ValidateStructFields panics if
+// there is an error, otherwise it returns the error (or nil if no error).
 func (c Caster[Json]) ValidateStructFields(panicOnError bool, structs ...any) error {
 	err := c.validateStructFields(structs...)
 	if panicOnError && err != nil {
@@ -61,7 +60,7 @@ func (c Caster[Json]) ValidateStructFields(panicOnError bool, structs ...any) er
 }
 
 // validateStructFields ensures that Json and all the specific projection types have struct fields
-// in the same order, same type, and same name (case-insensitive or _). It returns nil or an error.
+// in the same order and same type. It returns nil or an error.
 func (c Caster[Json]) validateStructFields(structs ...any) error {
 	mainStruct := reflect.TypeFor[Json]()
 
@@ -77,14 +76,14 @@ func (c Caster[Json]) validateStructFields(structs ...any) error {
 			return fmt.Errorf("structs have different number of fields: %s=%d vs %s=%d",
 				mainStruct.Name(), mainStruct.NumField(), otherStructType.Name(), otherStructType.NumField())
 		}
+
 		for f := range mainStruct.NumField() {
-			// Struct fields must be in same order, same type, and same name (case-insensitive or _)
+			// Struct fields must be in same order and same type
 			mf, of := mainStruct.Field(f), otherStructType.Field(f)
-			if mf.Type == of.Type && (strings.EqualFold(mf.Name, of.Name) || (of.Name == "_")) {
-				// OK: Same type and same name (case-insensitive) or name is _
-			} else {
-				return fmt.Errorf("structs have different fields: %s.%s vs %s.%s",
-					mainStruct.Name(), mf.Name, otherStructType.Name(), of.Name)
+			if mf.Type != of.Type {
+				return fmt.Errorf("structs have incompatible field #%d: %s.%s (%s) vs %s.%s (%s)",
+					f, mainStruct.Name(), mf.Name, mf.Type.String(),
+					otherStructType.Name(), of.Name, of.Type.String())
 			}
 		}
 	}

@@ -10,7 +10,7 @@ import (
 
 // ********** THE CODE BELOW SHOWS HOW TO USE A SUM TYPE ********** //
 
-// ptr returns a pointer to the given value. 
+// ptr returns a pointer to the given value.
 // Delete this function and use 'new' when using Go 1.26.
 func ptr[T any](v T) *T { return &v }
 
@@ -41,7 +41,7 @@ func jsonFromWebService() []byte {
 	// Marshal the array to JSON
 	incomingJson, _ := json.Marshal(shapes, jsontext.WithIndent("  "))
 	fmt.Println(string(incomingJson) + "\n----------") // Show what the JSON looks like
-	return ([]byte)(incomingJson)	// Return JSON to caller/client
+	return ([]byte)(incomingJson)                      // Return JSON to caller/client
 }
 
 func Example() {
@@ -55,18 +55,19 @@ func Example() {
 	// Process the shape objects
 	for _, s := range shapes {
 		switch *s.Kind {
-		case CircleShapeKind:
-			c := s.Circle()                          // Cast to Circle for code completion/type-safety
-			c.Color, c.Radius = ptr("white"), ptr(2) // Demo changing values
+		case CircleShapeKind: // "circle"
+			c := s.Circle()                          // Cast to *CircleShape
+			c.Color, c.Radius = ptr("white"), ptr(2) // Change circle fields
 
-		case RectangleShapeKind:
-			r := s.Rectangle()                 // Cast to Rectangle for code completion/type-safety
+		case RectangleShapeKind: // "rectangle"
+			r := s.Rectangle()                 // Cast to *RectangleShape
 			r.Height = ptr(min(*r.Height, 10)) // Forbid a Height > 10
 			r.Width = ptr(min(*r.Width, 10))   // Forbid a Width > 10
-			if *r.Height < 10 && *r.Width < 10 {
-				// Demo: Convert any Rectangle whose Width/Height < 10 to a Circle
-				c := s.SetCircle()
-				c.Color, c.Radius = ptr("blue"), ptr(5)
+
+			if *r.Height < 10 && *r.Width < 10 { // Contrived example for demo
+				// Demo: Show how to convert from current Kind to another Kind
+				c := r.SetCircle()                      // Convert from *RectangleShape to *CircleShape
+				c.Color, c.Radius = ptr("blue"), ptr(5) // Change circle fields
 			}
 
 		default:
@@ -172,7 +173,7 @@ type (
 		Kind *ShapeKind
 
 		// radius is the radius of a circle shape
-		_ *int
+		_ int
 
 		// width is the width of a rectangle shape
 		_ *int
@@ -241,7 +242,6 @@ func (s Shape) MarshalJSON() ([]byte, error) { return (&s).caster().MarshalJSON(
 // UnmarshalJSON unmarshals JSON data to the shape
 func (s *Shape) UnmarshalJSON(data []byte) error { return s.caster().UnmarshalJSON(data) }
 
-
 // String returns a readable JSON representation of the shape
 func (s CircleShape) String() string { return (&s).caster().String() }
 
@@ -250,7 +250,6 @@ func (s CircleShape) MarshalJSON() ([]byte, error) { return (&s).caster().Marsha
 
 // UnmarshalJSON unmarshals JSON data to the CircleShape
 func (s *CircleShape) UnmarshalJSON(data []byte) error { return s.caster().UnmarshalJSON(data) }
-
 
 // String returns a readable JSON representation of the shape
 func (s RectangleShape) String() string { return (&s).caster().String() }

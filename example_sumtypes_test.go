@@ -56,17 +56,17 @@ func Example() {
 	for _, s := range shapes {
 		switch *s.Kind {
 		case CircleShapeKind: // "circle"
-			c := s.Circle()                          // Cast to *CircleShape
+			c := s.Circle()                          // Cast *Shape to *CircleShape
 			c.Color, c.Radius = ptr("white"), ptr(2) // Change circle fields
 
 		case RectangleShapeKind: // "rectangle"
-			r := s.Rectangle()                 // Cast to *RectangleShape
+			r := s.Rectangle()                 // Cast *Shape to *RectangleShape
 			r.Height = ptr(min(*r.Height, 10)) // Forbid a Height > 10
 			r.Width = ptr(min(*r.Width, 10))   // Forbid a Width > 10
 
 			if *r.Height < 10 && *r.Width < 10 { // Contrived example for demo
 				// Demo: Show how to convert from current Kind to another Kind
-				c := r.SetCircle()                      // Convert from *RectangleShape to *CircleShape
+				c := r.SetCircle()                      // Convert *RectangleShape to *CircleShape
 				c.Color, c.Radius = ptr("blue"), ptr(5) // Change circle fields
 			}
 

@@ -2,6 +2,9 @@
 
 A Go package that provides casting capabilities between sum type projections using unsafe pointers.
 
+For more information, see my article describing this technique:
+https://medium.com/@jeffreymrichter/a-novel-approach-to-sum-types-in-go-e777790954cf
+
 ## Overview
 
 This package provides a `Caster` type that allows casting between a JSON-serializable struct and its variants. All variants must have the same memory layout, with the first field being a non-exported `xxxCaster` field of type `sumtype.Caster[Json]`.

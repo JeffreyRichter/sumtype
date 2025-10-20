@@ -8,6 +8,9 @@ import (
 	"github.com/JeffreyRichter/sumtype"
 )
 
+// Article describing this technique:
+// https://medium.com/@jeffreymrichter/a-novel-approach-to-sum-types-in-go-e777790954cf
+
 // ********** THE CODE BELOW SHOWS HOW TO USE A SUM TYPE ********** //
 
 // ptr returns a pointer to the given value.

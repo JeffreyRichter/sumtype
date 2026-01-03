@@ -4,6 +4,7 @@ import (
 	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"fmt"
+	"unsafe"
 
 	"github.com/JeffreyRichter/sumtype"
 )
@@ -233,6 +234,11 @@ type (
 	// cannot be called directly on shape variants.
 	shapeCaster sumtype.Caster[shape]
 )
+
+// Check at compile time that all shape structures have the save size
+var _ [0]struct{} = [unsafe.Sizeof(shape{}) - unsafe.Sizeof(Shape{})]struct{}{}
+var _ [0]struct{} = [unsafe.Sizeof(shape{}) - unsafe.Sizeof(CircleShape{})]struct{}{}
+var _ [0]struct{} = [unsafe.Sizeof(shape{}) - unsafe.Sizeof(RectangleShape{})]struct{}{}
 
 // RULES: String & MarshalJSON require by-val receiver, UnmarshalJSON requires by-ref receiver
 
